@@ -1,0 +1,55 @@
+#include <iostream>
+#include <vector>
+
+const double f_max = 1.0 / 6.0; // Altura máxima para asegurar que el área total sea 1
+
+// Función que define f(t) según el tiempo en horas
+double f(double t) {
+    if (t >= 6 && t <= 14) {
+        return f_max * (t - 6) / 8.0; // Crecimiento lineal de 6 am a 2 pm
+    } else if (t > 14 && t <= 18) {
+        return f_max * (18 - t) / 4.0; // Decrecimiento lineal de 2 pm a 6 pm
+    }
+    return 0.0;
+}
+
+// Método (a): Calcular el valor medio en el punto medio de cada intervalo
+std::vector<double> metodoA() {
+    std::vector<double> probabilidades;
+    for (int hora = 6; hora < 18; ++hora) {
+        double t_media = hora + 0.5; // Punto medio de la hora
+        probabilidades.push_back(f(t_media));
+    }
+    return probabilidades;
+}
+
+// Método (b): Calcular el área bajo la curva en cada intervalo (integral aproximada)
+std::vector<double> metodoB() {
+    std::vector<double> probabilidades;
+    for (int hora = 6; hora < 18; ++hora) {
+        double f_inicio = f(hora);
+        double f_fin = f(hora + 1);
+        double area = (f_inicio + f_fin) / 2.0; // Área de un trapecio
+        probabilidades.push_back(area);
+    }
+    return probabilidades;
+}
+
+int main() {
+    // Calcular probabilidades con ambos métodos
+    std::vector<double> probabilidadesA = metodoA();
+    std::vector<double> probabilidadesB = metodoB();
+    
+    // Mostrar resultados
+    std::cout << "Probabilidades usando el método (a) - valor medio:" << std::endl;
+    for (int i = 0; i < probabilidadesA.size(); ++i) {
+        std::cout << "Hora " << (6 + i) << " a " << (7 + i) << ": " << probabilidadesA[i] << std::endl;
+    }
+
+    std::cout << "\nProbabilidades usando el método (b) - integral:" << std::endl;
+    for (int i = 0; i < probabilidadesB.size(); ++i) {
+        std::cout << "Hora " << (6 + i) << " a " << (7 + i) << ": " << probabilidadesB[i] << std::endl;
+    }
+
+    return 0;
+}
