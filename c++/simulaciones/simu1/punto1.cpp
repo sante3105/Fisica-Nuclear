@@ -72,7 +72,7 @@ int main() {
         return 1;
     }
 
-    // Suponiendo que tienes una función continua f(x) que evalúas en un rango [6, 12] con pasos pequeños
+    // Suponiendo que tienes una función continua f(x) que evalúas en un rango [6, 18] con pasos pequeños
     archivoContinua << "x\tf(x)\n"; // Cabecera
     double paso = 0.1; // Resolución para la función continua
     for (double x = 6; x <= 18; x += paso) {
