@@ -1,0 +1,19 @@
+# ground_state_plot.gnuplot
+
+# Set common styles
+set datafile commentschars "#"
+set xlabel "x (Å)"
+set grid
+
+# Plot psi(x)
+set terminal pngcairo size 800,600
+set output "wavefunction.png"
+set title "Wavefunction ψ(x)"
+set ylabel "ψ(x)"
+plot "state1.dat" using 1:2 with lines title "ψ(x)" lc rgb "blue"
+
+# Plot probability density |ψ(x)|^2
+set output "probability_density.png"
+set title "Probability Density |ψ(x)|²"
+set ylabel "|ψ(x)|²"
+plot "state1.dat" using 1:3 with lines title "|ψ(x)|²" lc rgb "red"

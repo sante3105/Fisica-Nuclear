@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_eigen.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_vector.h>
+
+// User-specified potential
+static double v(double x) {
+    // Example: simple harmonic oscillator
+  return 0; //0.25 * x * x;
+}
+
+int main(void) {
+    // Physical constants (in eV·Å and eV)
+    const double HBAR_C = 1973.269788;   // ℏ·c in eV·Å
+    const double ME     = 511000.0;      // electron mass in eV
+    const double a      = 10;           // Å
+    const size_t n      = 100;           // grid points
+    const double d      = a / (double)n; // grid spacing
+
+    const size_t N      = n - 1;         // interior points
+    const size_t Nfull  = N + 2;         // including boundaries
+
+// --- 1) Write potential.dat (x, V(x)) ---
+FILE *fpot = fopen("potential.dat", "w");
+if (!fpot) { perror("opening potential.dat"); exit(EXIT_FAILURE); }
+for (size_t i_full = 0; i_full < Nfull; ++i_full) {
+    double x = -a/2.0 + i_full * d;  // Domain from -a/2 to a/2
+    double V = v(x);
+    fprintf(fpot, "%g %g\n", x, V);
+}
+fclose(fpot);
+
+// --- 2) Build tridiagonal matrix A of size N×N ---
+gsl_matrix *A = gsl_matrix_calloc(N, N);
+for (size_t i = 0; i < N; ++i) {
+    double xi = -a/2.0 + (i + 1) * d;  // Shift index to match grid points
+    // Fix the diagonal term formula as well
+double diag = 2.0 * (1.0 + ((ME * d*d) / (HBAR_C * HBAR_C)) * v(xi));
+    gsl_matrix_set(A, i, i, diag);
+    if (i + 1 < N) {
+        gsl_matrix_set(A, i,   i+1, -1.0);
+        gsl_matrix_set(A, i+1, i,   -1.0);
+    }
+}
+    // --- 3) Solve eigensystem for symmetric matrix ---
+    gsl_vector *eval = gsl_vector_alloc(N);
+    gsl_matrix *evec = gsl_matrix_alloc(N, N);
+    gsl_eigen_symmv_workspace *W = gsl_eigen_symmv_alloc(N);
+
+    gsl_eigen_symmv(A, eval, evec, W);
+    gsl_eigen_symmv_sort(eval, evec, GSL_EIGEN_SORT_VAL_ASC);
+
+    // --- 4) Write energies.dat for first 4 states ---
+    FILE *fene = fopen("energies.dat", "w");
+    if (!fene) { perror("opening energies.dat"); exit(EXIT_FAILURE); }
+    fprintf(fene, "# j  Energy(eV)\n");
+    for (size_t j = 0; j < 4 && j < N; ++j) {
+        double lambda = gsl_vector_get(eval, j);
+        double E = lambda * (HBAR_C * HBAR_C) / (2.0 * ME * d*d);
+        fprintf(fene, "%zu  %g\n", j, E);
+    }
+    fclose(fene);
+
+    // --- 5) Write stateN.dat with x, psi, psi^2 ---
+    for (size_t j = 0; j < 4 && j < N; ++j) {
+        char fname[32];
+        sprintf(fname, "state%zu.dat", j);
+        FILE *fp = fopen(fname, "w");
+        if (!fp) { perror("opening state file"); exit(EXIT_FAILURE); }
+        double lambda = gsl_vector_get(eval, j);
+        double E = lambda * (HBAR_C * HBAR_C) / (2.0 * ME * d*d);
+        fprintf(fp, "# State %zu   Energy = %g eV\n", j, E);
+        fprintf(fp, "#   x(Å)    psi    prob=psi^2\n");
+        for (size_t i_full = 0; i_full < Nfull; ++i_full) {
+            double x =  -a/2.0 + i_full * d;
+            double psi = 0.0;
+	    if (i_full > 0 && i_full < Nfull-1) {
+	      size_t matrix_idx = i_full - 1;  // Convert from full grid index to matrix index
+	      psi = gsl_matrix_get(evec, matrix_idx, j);
+}
+            }
+            fprintf(fp, "%g %g %g\n", x, psi, psi*psi);
+        }
+        fclose(fp);
+    }
+
+    // --- cleanup ---
+    gsl_eigen_symmv_free(W);
+    gsl_vector_free(eval);
+    gsl_matrix_free(evec);
+    gsl_matrix_free(A);
+
+    return EXIT_SUCCESS;
+}
