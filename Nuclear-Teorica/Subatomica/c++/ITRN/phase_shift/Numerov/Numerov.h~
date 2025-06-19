@@ -1,0 +1,9 @@
+#ifndef NUMEROV_H
+#define NUMEROV_H
+
+#include <vector>
+#include "Potential/Potential.h"
+
+std::vector<double> numerov(double E, const Potential& V, double rmin, double rmax, int N, double mu, double hbar);
+
+#endif
