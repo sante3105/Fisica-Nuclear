@@ -12,7 +12,7 @@
 
 int main() {
     // Parámetros físicos
-    double mu = 469.459;     // MeV/c^2
+    double mu = 855.38;     // MeV/c^2
     double hbar = 197.327;   // MeV·fm
     double rmin = 0.01;
     double rmax = 20;
@@ -23,7 +23,7 @@ int main() {
     std::ofstream out("delta_vs_E.dat");
     out << "# E [MeV]\tdelta_0 [deg]\n";
 
-    for (double E = 0.1; E <= 10; E += 0.05) {
+    for (double E = 0.1; E <= 2.05; E += 0.01) {
         try {
             auto u = numerov(E, V, rmin, rmax, N, mu, hbar);
             double delta_rad = computePhaseShift(u, E, a, rmin, rmax, N, mu, hbar);

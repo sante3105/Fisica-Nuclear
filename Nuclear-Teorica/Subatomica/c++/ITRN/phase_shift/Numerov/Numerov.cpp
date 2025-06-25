@@ -4,7 +4,7 @@
 
 std::vector<double> numerov(double E, const Potential& V, double rmin, double rmax, int N, double mu, double hbar) {
     std::vector<double> u(N, 0.0);
-    double h = (rmax - rmin) / (N - 1);
+    double h = 0.0001;
     double h2 = h * h;
 
     // Precomputar el vector de posiciones y f(r) = k^2 - (2μ/ħ²)·V(r)

@@ -37,11 +37,16 @@ int status = gsl_sf_coulomb_wave_FG_e(
         throw std::runtime_error("Error al evaluar funciones de Coulomb.");
 
     // Paso 4: Aplicar fórmula del desfase
-    double numerator = ka * Fp.val - F.val * LI;
+    double numerator = -(ka * Fp.val - F.val * LI);
     double denominator = ka * Gp.val - G.val * LI;
 
-    double tan_delta = numerator / denominator;
-    double delta_rad = std::atan(tan_delta);
+// Usar atan2 para determinar el cuadrante correcto del desfase
+double delta_rad = std::atan(numerator/ denominator);
+
+// Asegurar que esté en el rango [0, π]
+//if (delta_rad < 0.0)
+//    delta_rad += M_PI;
+
 
     return delta_rad; // en radianes
 }
