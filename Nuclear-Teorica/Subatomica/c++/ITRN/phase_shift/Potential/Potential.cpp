@@ -1,5 +1,6 @@
 #include <cmath>
 #include "Potential.h"
+#include <stdexcept> // for std::invalid_argument
 #include "../constants.h"
 
 Potential::Potential() {}
@@ -9,8 +10,13 @@ double Potential::nuclear(double r) const {
 }
 
 double Potential::coulomb(double r) const {
-    return (Z_P * Z_T * e2) / r;
+  if (r == 0.0) {
+        throw std::invalid_argument("r must be non-zero to avoid division by zero");
+    }
+  return (Z_P * Z_T * std::erf(r / 1.33)) / r ;// ALPHA + ALPHA 
+ // return (Z_P * Z_T * e2) / r;// C12 + p
 }
+
 
 double Potential::angular(double r, int l, double mua) const {
     double constant;
