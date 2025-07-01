@@ -2,8 +2,9 @@
 #define NUMEROV_H
 
 #include <vector>
+#include <utility>
 #include "../Potential/Potential.h"
 
-std::vector<double> numerov(double E, const Potential& V, double rmin, double rmax, int N, double mu, double hbar);
+std::pair<std::vector<double>, std::vector<double>> numerov(double l, double E, double a, const Potential& pot, double mua = 0.0);
 
 #endif

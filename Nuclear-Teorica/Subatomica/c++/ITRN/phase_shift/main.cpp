@@ -1,43 +1,90 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <iomanip>
+#include <sstream>
 #define _USE_MATH_DEFINES
 #include <cmath>
-
 
 #include "Numerov/Numerov.h"
 #include "PhaseShift/PhaseShift.h"
 #include "Potential/Potential.h"
 
+void unwrapPhases(std::vector<double>& phases) {
+    if (phases.size() < 2) return;
+    
+    for (size_t k = 1; k < phases.size(); ++k) {
+        double diff = phases[k] - phases[k-1];
+        
+        if (diff > 1.5) {
+            // Apply π to all previous phases
+            for (size_t i = 0; i < k; ++i) {
+                phases[i] += M_PI;
+            }
+        } else if (diff < -1.5) {
+            // Apply π to all subsequent phases
+            for (size_t i = k; i < phases.size(); ++i) {
+                phases[i] += M_PI;
+            }
+        }
+    }
+}
+
 int main() {
-    // Parámetros físicos
-    double mu = 855.38;     // MeV/c^2
-    double hbar = 197.327;   // MeV·fm
-    double rmin = 0.01;
-    double rmax = 20;
-    double a = 8.0;          // radio de empalme
-    int N = 10;
+    double l, a;
+    std::cout << "Ingrese valor de l (momento angular): ";
+    std::cin  >> l;
+    std::cout << "Ingrese valor del radio del canal a [fm]: ";
+    std::cin  >> a;
 
-    Potential V;
-    std::ofstream out("delta_vs_E.dat");
-    out << "# E [MeV]\tdelta_0 [deg]\n";
+    // Construir nombre de archivo
+    std::ostringstream fname;
+    fname << "delta_vs_E_l=" << l << "_a=" << a << ".dat";
 
-    for (double E = 0.1; E <= 2.05; E += 0.01) {
+    Potential pot;
+    std::ofstream out(fname.str());
+    if(!out) {
+        std::cerr << "No se pudo abrir " << fname.str() << "\n";
+        return 1;
+    }
+    out << "# E [MeV]\tdelta_l [deg]\n";
+    
+    std::vector<double> all_phases;
+    std::vector<double> energies;
+
+    for(double E = 0.1; E <= 2.05 + 1e-9; E += 0.01) {
         try {
-            auto u = numerov(E, V, rmin, rmax, N, mu, hbar);
-            double delta_rad = computePhaseShift(u, E, a, rmin, rmax, N, mu, hbar);
-            double delta_deg = delta_rad * 180.0 / M_PI;
-            out << std::fixed << std::setprecision(4)
-                << E << "\t" << delta_deg << "\n";
-            std::cout << "E = " << E << " MeV\tδ₀ = " << delta_deg << "°\n";
-        } catch (const std::exception& e) {
-            std::cerr << "Error at E = " << E << " MeV: " << e.what() << "\n";
+            auto [u, du] = numerov(l, E, a, pot);  // ahora con pot
+            double delta_rad = computePhaseShift(u, du, E, a, l);
+
+	    all_phases.push_back(delta_rad);
+            energies.push_back(E);
+	    
+
+        } catch(const std::exception& e) {
+            std::cerr << "Error en E = " << E
+                      << " MeV: " << e.what() << '\n';
+	               // Push NaN or skip this energy
+            all_phases.push_back(std::numeric_limits<double>::quiet_NaN());
+            energies.push_back(E);
         }
     }
 
-    out.close();
-    std::cout << "Resultado guardado en 'delta_vs_E.dat'\n";
+    // Apply phase unwrapping
+    unwrapPhases(all_phases);
+    
+    // Second pass: write results to file
+    for(size_t i = 0; i < all_phases.size(); ++i) {
+        if (!std::isnan(all_phases[i])) {
+            double delta_deg = all_phases[i] * 180.0 / M_PI;
+            
+            out << std::fixed << std::setprecision(4)
+                << energies[i] << '\t' << delta_deg << '\n';
+            
+            std::cout << "E = " << energies[i]
+                      << " MeV\tδ = " << delta_deg << "°\n";
+        }
+    }
+    
+    std::cout << "Archivo generado: " << fname.str() << '\n';
     return 0;
 }
-

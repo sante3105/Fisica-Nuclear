@@ -3,50 +3,43 @@
 #include <stdexcept>
 #include <gsl/gsl_sf_coulomb.h>
 #include <gsl/gsl_errno.h>
+#include "../constants.h"
 
-double computePhaseShift(const std::vector<double>& u, double E, double a, double rmin, double rmax, int N, double mu, double hbar) {
-    // Paso 1: Constantes físicas
-    const double Z1 = 1.0;
-    const double Z2 = 6.0;
-    const double e2 = 1.44; // MeV·fm
+double Sommerfield(double E){
+    return alpha * Z_P * Z_T * std::sqrt(mu / (2 * E));
+}
 
-    double k = std::sqrt(2.0 * mu * E) / hbar;
-    double eta = Z1 * Z2 * e2 * mu / (hbar * hbar * k);
-    double ka = k * a;
-    double h = (rmax - rmin) / (N - 1);
+double computePhaseShift(const std::vector<double>& u, const std::vector<double>& du, double E, double a, double l) {
+    double h = 0.001;
+    double k = std::sqrt(2 * mu * E) / hbar;
+    double eta = Sommerfield(E);
+    double rho = k * a;
 
-    // Paso 2: Encontrar índice más cercano a r = a
-    int ia = static_cast<int>((a - rmin) / h);
-    if (ia < 1 || ia > N - 2)
-        throw std::runtime_error("Matching point a fuera del rango del vector u.");
+    int index = static_cast<int>(a / h) - 1; // más seguro
+    if (index < 0 || index >= static_cast<int>(du.size())){
+        throw std::runtime_error("Índice inválido para derivada logarítmica.");
+	}
+    if (std::abs(u[index +1]) < 1e-10){
+        throw std::runtime_error("Valor de u demasiado cercano a cero para derivada logarítmica.");
+		}
+    double L = a * du[index] / u[index + 1];
 
-    double ua = u[ia];
-    double uprime = (u[ia + 1] - u[ia - 1]) / (2.0 * h);
-    double LI = uprime / ua;
-
-    // Paso 3: Calcular funciones de Coulomb y derivadas
     gsl_sf_result F, Fp, G, Gp;
-double exp_F, exp_G;
-
-int status = gsl_sf_coulomb_wave_FG_e(
-    eta, ka, 0.0, 0,
-    &F, &Fp, &G, &Gp, &exp_F, &exp_G
-);
+    double exp_F, exp_G;
+    int ell = static_cast<int>(std::lround(l));
+    int status = gsl_sf_coulomb_wave_FG_e(
+        eta, rho, ell, 0,
+        &F, &Fp, &G, &Gp, &exp_F, &exp_G
+    );
 
     if (status != GSL_SUCCESS)
         throw std::runtime_error("Error al evaluar funciones de Coulomb.");
 
-    // Paso 4: Aplicar fórmula del desfase
-    double numerator = -(ka * Fp.val - F.val * LI);
-    double denominator = ka * Gp.val - G.val * LI;
+    double numerator = -(rho * Fp.val - F.val * L);
+    double denominator = rho * Gp.val - G.val * L;
 
-// Usar atan2 para determinar el cuadrante correcto del desfase
-double delta_rad = std::atan(numerator/ denominator);
-
-// Asegurar que esté en el rango [0, π]
-//if (delta_rad < 0.0)
-//    delta_rad += M_PI;
-
-
+    double Sl = numerator / denominator;
+    double delta_rad = std::atan(Sl);
+    
     return delta_rad; // en radianes
 }

@@ -3,6 +3,7 @@
 
 #include <vector>
 
-double computePhaseShift(const std::vector<double>& u, double E, double a, double rmin, double rmax, int N, double mu, double hbar);
+double Sommerfield(double E);
+double computePhaseShift(const std::vector<double>& u,const std::vector<double>& du, double E, double a, double l );
 
 #endif
