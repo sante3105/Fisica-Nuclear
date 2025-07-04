@@ -1,3 +1,14 @@
 myenv/
 python/.ipynb_checkpoints/
 venv
+# Editor/backup files
+*~
+*.swp
+*.bak
+
+# Windows metadata
+*.Zone.Identifier
+
+# Mac metadata (just in case)
+.DS_Store
+
