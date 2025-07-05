@@ -44,22 +44,25 @@ ComplexNumerovResult numerov_complex(double l, double E, double a, const Potenti
         }
     }
     
-    // Cálculo de derivadas complejas
-    for (size_t i = 0; i < du.size(); ++i) {
-        if (i == 0) {
-            // Diferencia hacia adelante
-            du[i] = (u[i + 1] - u[i]) / h;
-        } else {
-            // Diferencia central
-            du[i] = (u[i + 1] - u[i - 1]) / (2.0 * h);
-        }
+for (size_t i = 0; i < du.size(); ++i) {
+    if (i == 0) {
+        // Forward difference
+        du[i] = (u[i + 1] - u[i]) / h;
+    } else if (i == du.size() - 1) {
+        // Backward difference
+        du[i] = (u[i] - u[i - 1]) / h;
+    } else {
+        // Central difference
+        du[i] = (u[i + 1] - u[i - 1]) / (2.0 * h);
     }
+}
+
     
     return {r, u, du};
 }
 
 // Función de compatibilidad que retorna solo las partes reales
-std::pair<std::vector<double>, std::vector<double>> numerov(double l, double E, double a, const Potential& pot, double mua) {
-    auto result = numerov_complex(l, E, a, pot, mua);
-    return {result.u_real(), result.du_real()};
-}
+//std::pair<std::vector<double>, std::vector<double>> numerov(double l, double E, double a, const Potential& pot, double mua) {
+//    auto result = numerov_complex(l, E, a, pot, mua);
+//  return {result.u_real(), result.du_real()};
+//}

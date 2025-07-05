@@ -13,10 +13,10 @@ struct ComplexNumerovResult {
     std::vector<Complex> du;
     
     // Métodos auxiliares para extraer partes reales e imaginarias
-    std::vector<double> u_real() const;
-    std::vector<double> u_imag() const;
-    std::vector<double> du_real() const;
-    std::vector<double> du_imag() const;
+    //std::vector<double> u_real() const;
+  // std::vector<double> u_imag() const;
+  // std::vector<double> du_real() const;
+  // std::vector<double> du_imag() const;
 };
 
 // Función principal para potenciales complejos
