@@ -30,19 +30,22 @@ else
     echo "⚠️ requirements.txt not found — skipping pip install."
 fi
 
+# 4. Create portable bootstrap script
 echo "📝 Creating bootstrap script: $BOOTSTRAP_FILE"
-cat > "$BOOTSTRAP_FILE" <<EOF
+cat > "$BOOTSTRAP_FILE" <<'EOF'
 #!/bin/bash
 # Activates the virtual environment located at ../venv
 
-VENV_PATH="\$(dirname "\$0")/../venv"
-if [ ! -f "\$VENV_PATH/bin/activate" ]; then
-    echo "❌ Virtual environment not found at \$VENV_PATH"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VENV_PATH="$SCRIPT_DIR/../venv"
+
+if [ ! -f "$VENV_PATH/bin/activate" ]; then
+    echo "❌ Virtual environment not found at $VENV_PATH"
     echo "   Run ./setup_venv.sh to create it."
     return 1 2>/dev/null || exit 1
 fi
 
-source "\$VENV_PATH/bin/activate"
+source "$VENV_PATH/bin/activate"
 EOF
 
 chmod +x "$BOOTSTRAP_FILE"
