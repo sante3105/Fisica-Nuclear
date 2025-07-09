@@ -64,7 +64,7 @@ int main() {
     std::vector<double> all_s_factors;
     std::vector<double> energies_lab;
 
-    for (double E = 0.01; E <= 0.7 + 1e-9; E += 0.01) {
+    for (double E = 0.00012; E <= 0.168 + 1e-9; E += 0.00001) {
         double Elab = E * (A_P + A_T) / A_T; // CM ➔ Lab
         try {
             auto [r, u, du] = numerov_complex(l, E, a, pot);
