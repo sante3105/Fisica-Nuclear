@@ -104,7 +104,7 @@ int main() {
         if (!std::isnan(all_phases_real[i])) {
             double delta_real_deg = all_phases_real[i] * 180.0 / M_PI;
             double delta_imag_deg = all_phases_imag[i] * 180.0 / M_PI;
-            double cross_section_mb = all_cross_sections[i]; //* 1000.0;
+            double cross_section_mb = all_cross_sections[i] /100; //* 1000.0;
 
             out << std::fixed << std::setprecision(4)
                 << energies_lab[i] << '\t'
@@ -116,7 +116,7 @@ int main() {
             std::cout << "Elab = " << energies_lab[i] << " MeV\t"
                       << "δ_real = " << delta_real_deg << "°\t"
                       << "δ_imag = " << delta_imag_deg << "°\t"
-                      << "σ = " << cross_section_mb << " mb\t"
+                      << "σ = " << cross_section_mb << " b\t"
                       << "S = " << all_s_factors[i] << " MeV*mb\n";
         }
     }

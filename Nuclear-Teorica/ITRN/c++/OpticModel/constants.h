@@ -28,7 +28,7 @@ inline constexpr double mu = (A_P * A_T * uma_to_MeV) / (A_P + A_T); // MeV/c²
 inline constexpr double V_r = -30.0;  // MeV (parte real)
 inline constexpr double V_i = -0.04964;   // MeV (parte imaginaria, inicialmente cero)
 inline constexpr double a_p = 1.338;// fm
-inline constexpr double R_N = a_p*(std::exp(-std::pow(A_P, 1/3)) + std::exp(-std::pow(A_T, 1/3)));;
+inline constexpr double R_N = a_p*(std::pow(A_P, 1/3) + std::pow(A_T, 1/3));;
 
 // Potencial complejo
 inline const Complex V0_complex(V_r, V_i); // Negativo para aplicar en potential

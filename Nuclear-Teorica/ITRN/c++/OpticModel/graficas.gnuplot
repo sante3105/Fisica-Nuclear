@@ -46,7 +46,7 @@ plot data_file using 1:3 with linespoints ls 1 notitle
 # ------------------------------------------------------------------
 set output sprintf("%s/seccion_eficaz.pdf", img_dir)
 set title sprintf("Sección Eficaz (l=%g, a=%g fm)", l, a)
-set ylabel "σ [mb]"
+set ylabel "σ [b]"
 set logscale y
 plot data_file using 1:4 with linespoints ls 1 notitle
 unset logscale y     # reset for next graph
@@ -56,7 +56,7 @@ unset logscale y     # reset for next graph
 # ------------------------------------------------------------------
 set output sprintf("%s/factor_S.pdf", img_dir)
 set title sprintf("Factor S (l=%g, a=%g fm)", l, a)
-set ylabel "S(E) [MeV·mb]"
+set ylabel "S(E) [MeV·b]"
 plot data_file using 1:5 with linespoints ls 1 notitle
 
 unset output
