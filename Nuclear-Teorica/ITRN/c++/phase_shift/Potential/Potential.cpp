@@ -13,8 +13,8 @@ double Potential::coulomb(double r) const {
   if (r == 0.0) {
         throw std::invalid_argument("r must be non-zero to avoid division by zero");
     }
-  return (Z_P * Z_T * std::erf(r / 1.33)) / r ;// ALPHA + ALPHA 
- // return (Z_P * Z_T * e2) / r;// C12 + p
+  // return (Z_P * Z_T * std::erf(r / 1.33)) / r ;// ALPHA + ALPHA 
+  return (Z_P * Z_T * e2) / r;// C12 + p
 }
 
 

@@ -2,23 +2,23 @@
 #define POTENTIAL_H
 #include <complex>
 
-using Complex = std::complex<double>;
+using Complex = std::complex<long double>;
 
 class Potential {
 public:
     Potential();
     
     // Potenciales individuales
-    Complex nuclear(double r) const;           // Ahora complejo
-    double coulomb(double r) const;            // Siempre real
-    double angular(double r, int l, double mua = 0.0) const; // Siempre real
+    Complex nuclear(long double r) const;           // Ahora complejo
+    long double coulomb(long double r) const;       // Siempre real
+    long double angular(long double r, int l, long double mua = 0.0) const; // Siempre real
     
     // Potencial total complejo
-    Complex operator()(double r, int l = 0, double mua = 0.0) const;
+    Complex operator()(long double r, int l = 0, long double mua = 0.0) const;
     
     // Métodos auxiliares para obtener partes real e imaginaria
-    double real_part(double r, int l = 0, double mua = 0.0) const;
-    double imag_part(double r, int l = 0, double mua = 0.0) const;
+    long double real_part(long double r, int l = 0, long double mua = 0.0) const;
+    long double imag_part(long double r, int l = 0, long double mua = 0.0) const;
 };
 
 #endif

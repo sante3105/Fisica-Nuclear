@@ -1,10 +1,10 @@
-#ifndef PHASESHIFT_H
-#define PHASESHIFT_H
+#pragma once
 #include <vector>
 #include <complex>
 
-double Sommerfield(double E);
-std::complex<double> computePhaseShift(const std::vector<std::complex<double>>& u,
-                                       const std::vector<std::complex<double>>& du, 
-                                       double E, double a, double l);
-#endif
+long double Sommerfield(long double E);
+
+// Ahora retorna Wr y Wi donde cot(delta0) = Wr + i*Wi
+std::complex<long double> computeWrWi(const std::vector<std::complex<long double>>& u, 
+                                     const std::vector<std::complex<long double>>& du, 
+                                     long double E, long double a, long double l);

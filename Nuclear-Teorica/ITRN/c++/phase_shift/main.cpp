@@ -53,7 +53,7 @@ int main() {
     std::vector<double> all_phases;
     std::vector<double> energies;
 
-    for(double E = 0.1; E <= 20 + 1e-9; E += 0.01) {
+    for(double E = 0.1; E <= 2 + 1e-9; E += 0.001) {
         try {
             auto [u, du] = numerov(l, E, a, pot);  // ahora con pot
             double delta_rad = computePhaseShift(u, du, E, a, l);
