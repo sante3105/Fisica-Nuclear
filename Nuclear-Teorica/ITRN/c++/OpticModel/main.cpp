@@ -61,7 +61,7 @@ int main() {
     std::vector<long double> energies_lab;
     std::vector<std::complex<long double>> all_L_values;
 
-    for (long double E = 0.0001L; E <= 0.168L + 1e-9L; E += 0.0001L) {
+    for (long double E = 0.00012L; E <= 0.168L + 1e-9L; E += 0.0001L) {
         long double Elab = E * (A_P + A_T) / A_T; // CM ➔ Lab
         try {
             auto [r, u, du] = numerov_complex(l, E, a, pot);
@@ -78,9 +78,9 @@ int main() {
             
             if (W_squared > 1e-40L) {  // Evitar división por cero con threshold más bajo
                 cross_section = (M_PI / (k * k)) * (-4.0L * Wi / W_squared);
+		std::cout<< (-4.0L * Wi / W_squared) <<"\n";
             }
-	    std::cout<<M_PI<<'\t';
-	    std::cout<<k*k<<'\n';
+	    
             
             // Para valores muy pequeños, usar valor absoluto
             if (cross_section < 0.0L) {
@@ -129,7 +129,7 @@ int main() {
     // Write results
     for (size_t i = 0; i < all_Wr.size(); ++i) {
         if (!std::isnan(all_Wr[i])) {
-	  long double cross_section_mb = all_cross_sections[i]* 10000; // / 100.0L; // Conversión a mb
+	  long double cross_section_mb = all_cross_sections[i] / 100 ; // / 100.0L; // Conversión a b
 
             out << std::fixed << std::setprecision(15)  // Increased precision
                 << energies_lab[i] << '\t'
