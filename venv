@@ -1,12 +1,13 @@
 #!/bin/bash
-# Activates the virtual environment located at ../venv
+# Activates the external virtual environment located at ../venv_<repo_name>
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-VENV_PATH="$SCRIPT_DIR/../venv"
+REPO_NAME="$(basename "$SCRIPT_DIR")"
+VENV_PATH="$(dirname "$SCRIPT_DIR")/venv/venv_$REPO_NAME"
 
 if [ ! -f "$VENV_PATH/bin/activate" ]; then
-    echo "❌ Virtual environment not found at $VENV_PATH"
-    echo "   Run ./setup_venv.sh to create it."
+    echo "Virtual environment not found at $VENV_PATH"
+    echo "Run ./setup_venv.sh to create it."
     return 1 2>/dev/null || exit 1
 fi
 
