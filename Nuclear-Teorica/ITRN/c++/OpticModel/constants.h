@@ -6,12 +6,12 @@
 using Complex = std::complex< long double>;
 
 // Cargas
-inline constexpr int Z_P = 1;   // Z del proyectil (Deuterio)
-inline constexpr int Z_T = 1; //1;   // Z del blanco (Tritio)
+inline constexpr int Z_P = 1.0;   // Z del proyectil (Deuterio)
+inline constexpr int Z_T = 1.0; //1;   // Z del blanco (Tritio)
 
 // Masas (en unidades de masa atómica)
-inline constexpr int A_P = 2; // 2;   // A del proyectil
-inline constexpr int A_T = 3; // 3;  // A del blanco
+inline constexpr int A_P = 2.0; // 2;   // A del proyectil
+inline constexpr int A_T = 3.0; // 3;  // A del blanco
 
 // Constantes físicas
 inline constexpr  long double uma_to_MeV = 931.494;      // 1 uma = 931.494 MeV/c²
